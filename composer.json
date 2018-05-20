@@ -1,0 +1,20 @@
+{
+    "name": "dakshhmehta/kcfl",
+    "description": "KCFL Game Library",
+    "type": "library",
+    "require-dev": {
+        "phpspec/phpspec": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dakshhmehta\\Kcfl\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daksh Mehta",
+            "email": "daksh@dristal.com"
+        }
+    ]
+}

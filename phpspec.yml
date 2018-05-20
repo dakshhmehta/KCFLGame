@@ -1,0 +1,4 @@
+suites:
+    dakshhmehta_suite:
+        namespace: Dakshhmehta\Kcfl
+        psr4_prefix: Dakshhmehta\Kcfl
