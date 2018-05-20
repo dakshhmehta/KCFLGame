@@ -52,44 +52,93 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_not_record_score_for_player_not_playing()
     {
-    	$this->addPlayer("Daksh");
-    	$this->start();
-    	$this->askScore("Tirth", 5)->shouldReturn(false);
-    	$this->askScore("Daksh", 5)->shouldReturn(true);
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Tirth", 5)->shouldReturn(false);
+        $this->askScore("Daksh", 5)->shouldReturn(true);
     }
 
     public function it_can_not_record_score_more_than_card_no()
     {
-    	$this->addPlayer(["Daksh", "Tirth"]);
-    	$this->start(); // 7 started
-    	$this->askScore("Daksh", 8)->shouldReturn(false);
-    	$this->nextRound(); // 6
-    	$this->askScore("Daksh", 7)->shouldReturn(false);
+        $this->addPlayer(["Daksh", "Tirth"]);
+        $this->start(); // 7 started
+        $this->askScore("Daksh", 8)->shouldReturn(false);
+        $this->nextRound(); // 6
+        $this->askScore("Daksh", 7)->shouldReturn(false);
 
-    	$this->nextRound(); // 5
-    	$this->askScore("Daksh", 4)->shouldReturn(true);
-    	$this->askScore("Tirth", 5)->shouldReturn(true);
+        $this->nextRound(); // 5
+        $this->askScore("Daksh", 4)->shouldReturn(true);
+        $this->askScore("Tirth", 5)->shouldReturn(true);
     }
 
     public function it_can_not_record_score_without_starting_game()
     {
-    	$this->askScore("Daksh", 3)->shouldReturn(false);
+        $this->askScore("Daksh", 3)->shouldReturn(false);
 
-    	$this->addPlayer("Daksh");
-    	$this->start();
-    	$this->askScore("Daksh", 3)->shouldReturn(true);
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3)->shouldReturn(true);
     }
 
     public function it_can_ask_score_at_start_of_each_round()
     {
-    	$this->addPlayer("Daksh");
-    	$this->start();
-    	$this->askScore("Daksh", 3)->shouldReturn(true);
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3)->shouldReturn(true);
+    }
+
+    public function it_can_not_give_score_when_round_not_completed()
+    {
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3)->shouldReturn(true);
+        $this->getScore("Daksh")->shouldReturn(false);
+    }
+
+    public function it_can_not_give_score_for_player_do_not_exists()
+    {
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3)->shouldReturn(true);
+        $this->getScore("Tirth")->shouldReturn(false);
+    }
+
+    public function it_can_declare_score_positively()
+    {
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3);
+        $this->submitScore("Daksh", true);
+        $this->getScore("Daksh")->shouldReturn(30);
+    }
+
+    public function it_can_declare_score_negetively()
+    {
+        $this->addPlayer("Daksh");
+        $this->start();
+        $this->askScore("Daksh", 3);
+        $this->submitScore("Daksh", false);
+        $this->getScore("Daksh")->shouldReturn(-30);
+    }
+
+    public function it_can_declare_score_for_0()
+    {
+        $this->addPlayer(["Daksh", "Tirth"]);
+        $this->start();
+
+        $this->askScore("Daksh", 0);
+        $this->askScore("Tirth", 0);
+
+        $this->submitScore("Daksh", true);
+        $this->submitScore("Tirth", false);
+
+        $this->getScore("Daksh")->shouldReturn(10);
+        $this->getScore("Tirth")->shouldReturn(-10);
     }
 
     public function it_should_follow_KCFL_color()
     {
-    	$this->start();
+        $this->start();
 
         $this->getRoundColor()->shouldReturn('K');
 
@@ -118,14 +167,14 @@ class GameSpec extends ObjectBehavior
 
     public function it_cant_return_any_round_information_when_game_not_started()
     {
-    	$this->getRoundColor()->shouldReturn(false);
-    	$this->getRoundNo()->shouldReturn(false);
-    	$this->getRoundCardsCount()->shouldReturn(false);
+        $this->getRoundColor()->shouldReturn(false);
+        $this->getRoundNo()->shouldReturn(false);
+        $this->getRoundCardsCount()->shouldReturn(false);
     }
 
     public function it_should_return_correct_round_no()
     {
-    	$this->start();
+        $this->start();
 
         $this->getRoundNo()->shouldReturn(1);
 

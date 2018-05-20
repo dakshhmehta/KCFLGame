@@ -9,7 +9,7 @@ class Game
     protected $roundNo    = 0;
     protected $roundColor = null;
     protected $cardCount  = 0;
-    protected $scoreCard = [];
+    protected $scoreCard  = [];
 
     public function addPlayer($name)
     {
@@ -52,21 +52,21 @@ class Game
     {
         $this->roundNo++;
 
-        if ($this->cardCount == 0) {
+        if ($this->getRoundCardsCount() == 0) {
             // We are starting the game I guess.
             $this->cardCount = ((count($this->players) < 8) ? 7 : count($this->players) - 7);
-        }
-        else {
+        } else {
             $this->cardCount--;
         }
-
 
         return $this;
     }
 
     public function getRoundColor()
     {
-        if(! $this->isStarted) return false;
+        if (!$this->isStarted) {
+            return false;
+        }
 
         $colors = ["K", "C", "F", "L"];
 
@@ -74,30 +74,84 @@ class Game
             return $colors[$this->roundNo - 1];
         }
 
-        $i = ($this->roundNo-1)%4;
+        $i = ($this->roundNo - 1) % 4;
 
         return $colors[$i];
     }
 
     public function getRoundCardsCount()
     {
-        if(! $this->isStarted) return false;
+        if (!$this->isStarted) {
+            return false;
+        }
 
         return $this->cardCount;
     }
 
     public function getRoundNo()
     {
-        if(! $this->isStarted) return false;
+        if (!$this->isStarted) {
+            return false;
+        }
 
         return $this->roundNo;
     }
 
     public function askScore($playerName, $score)
     {
-        if(! $this->isStarted) return false;
-        if(! in_array($playerName, $this->players)) return false;
-        if($score > $this->getRoundCardsCount()) return false;
+        if (!$this->isStarted) {
+            return false;
+        }
+
+        if (!in_array($playerName, $this->getPlayers())) {
+            return false;
+        }
+
+        if ($score > $this->getRoundCardsCount()) {
+            return false;
+        }
+
+        $this->scoreCard[$this->getRoundNo()][$playerName] = [
+            'color'  => $this->getRoundColor(),
+            'cards'  => $this->getRoundCardsCount(),
+            'score'  => $score,
+            'result' => false,
+        ];
+
+        return true;
+    }
+
+    public function getScore($playerName)
+    {
+        if (!in_array($playerName, $this->getPlayers())) {
+            return false;
+        }
+
+        $score = 0;
+        foreach ($this->scoreCard as $rounds) {
+            foreach ($rounds as $pName => $information) {
+                if ($pName == $playerName) {
+                    if ($information['result']) {
+                        $score += $information['result'];
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return $score;
+    }
+
+    public function submitScore($playerName, $result)
+    {
+        $scoreCard = &$this->scoreCard[$this->getRoundNo()][$playerName];
+
+        if ($result == true) {
+            $scoreCard['result'] = 10 * (($scoreCard['score'] == 0) ? 1 : $scoreCard['score']);
+        } else {
+            $scoreCard['result'] = -10 * (($scoreCard['score'] == 0) ? 1 : $scoreCard['score']);
+        }
 
         return true;
     }
