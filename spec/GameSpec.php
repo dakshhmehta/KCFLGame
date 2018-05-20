@@ -50,11 +50,47 @@ class GameSpec extends ObjectBehavior
         $this->start()->shouldReturn(false);
     }
 
+    public function it_can_not_record_score_for_player_not_playing()
+    {
+    	$this->addPlayer("Daksh");
+    	$this->start();
+    	$this->askScore("Tirth", 5)->shouldReturn(false);
+    	$this->askScore("Daksh", 5)->shouldReturn(true);
+    }
+
+    public function it_can_not_record_score_more_than_card_no()
+    {
+    	$this->addPlayer(["Daksh", "Tirth"]);
+    	$this->start(); // 7 started
+    	$this->askScore("Daksh", 8)->shouldReturn(false);
+    	$this->nextRound(); // 6
+    	$this->askScore("Daksh", 7)->shouldReturn(false);
+
+    	$this->nextRound(); // 5
+    	$this->askScore("Daksh", 4)->shouldReturn(true);
+    	$this->askScore("Tirth", 5)->shouldReturn(true);
+    }
+
+    public function it_can_not_record_score_without_starting_game()
+    {
+    	$this->askScore("Daksh", 3)->shouldReturn(false);
+
+    	$this->addPlayer("Daksh");
+    	$this->start();
+    	$this->askScore("Daksh", 3)->shouldReturn(true);
+    }
+
+    public function it_can_ask_score_at_start_of_each_round()
+    {
+    	$this->addPlayer("Daksh");
+    	$this->start();
+    	$this->askScore("Daksh", 3)->shouldReturn(true);
+    }
+
     public function it_should_follow_KCFL_color()
     {
     	$this->start();
 
-        $this->nextRound();
         $this->getRoundColor()->shouldReturn('K');
 
         $this->nextRound();
@@ -68,6 +104,16 @@ class GameSpec extends ObjectBehavior
 
         $this->nextRound();
         $this->getRoundColor()->shouldReturn('K');
+
+        $this->nextRound();
+        $this->getRoundColor()->shouldReturn('C');
+
+        $this->nextRound();
+        $this->getRoundColor()->shouldReturn('F');
+
+        $this->nextRound();
+        $this->getRoundColor()->shouldReturn('L');
+
     }
 
     public function it_cant_return_any_round_information_when_game_not_started()
@@ -93,6 +139,8 @@ class GameSpec extends ObjectBehavior
 
         $this->start();
         $this->getRoundCardsCount()->shouldReturn(7);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(6);
     }
 
     public function when_round_increases_card_decreases()

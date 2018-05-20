@@ -9,6 +9,7 @@ class Game
     protected $roundNo    = 0;
     protected $roundColor = null;
     protected $cardCount  = 0;
+    protected $scoreCard = [];
 
     public function addPlayer($name)
     {
@@ -55,6 +56,10 @@ class Game
             // We are starting the game I guess.
             $this->cardCount = ((count($this->players) < 8) ? 7 : count($this->players) - 7);
         }
+        else {
+            $this->cardCount--;
+        }
+
 
         return $this;
     }
@@ -69,7 +74,9 @@ class Game
             return $colors[$this->roundNo - 1];
         }
 
-        return "K";
+        $i = ($this->roundNo-1)%4;
+
+        return $colors[$i];
     }
 
     public function getRoundCardsCount()
@@ -84,5 +91,14 @@ class Game
         if(! $this->isStarted) return false;
 
         return $this->roundNo;
+    }
+
+    public function askScore($playerName, $score)
+    {
+        if(! $this->isStarted) return false;
+        if(! in_array($playerName, $this->players)) return false;
+        if($score > $this->getRoundCardsCount()) return false;
+
+        return true;
     }
 }
