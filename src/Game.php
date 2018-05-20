@@ -10,6 +10,7 @@ class Game
     protected $roundColor = null;
     protected $cardCount  = 0;
     protected $scoreCard  = [];
+    protected $inverse    = true;
 
     public function addPlayer($name)
     {
@@ -32,7 +33,7 @@ class Game
 
     public function start()
     {
-        if ($this->isStarted) {
+        if ($this->isStarted or count($this->getPlayers()) < 2) {
             return false;
         }
 
@@ -52,11 +53,23 @@ class Game
     {
         $this->roundNo++;
 
-        if ($this->getRoundCardsCount() == 0) {
+        $maxCards = ((count($this->players) < 8) ? 7 : 7 - (count($this->players) - 7));
+
+        if ($this->getRoundNo() == 1) {
             // We are starting the game I guess.
-            $this->cardCount = ((count($this->players) < 8) ? 7 : count($this->players) - 7);
+            $this->cardCount = $maxCards;
         } else {
-            $this->cardCount--;
+            if($this->inverse){                
+                $this->cardCount--;
+            }
+            else {
+                $this->cardCount++;
+            }
+
+            if ($maxCards == $this->cardCount-1 || $this->cardCount == 1) {
+                $this->inverse = false;
+                $this->cardCount = 1;
+            }
         }
 
         return $this;

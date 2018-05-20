@@ -34,11 +34,22 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_start_game()
     {
+    	$this->addPlayer(["Daksh", "Tirth"]);
         $this->start()->shouldReturn(true);
+    }
+
+    public function it_cant_start_game_without_minimum_of_two_players()
+    {
+    	$this->addPlayer("Daksh");
+    	$this->start()->shouldReturn(false);
+
+    	$this->addPlayer("Tirth");
+    	$this->start()->shouldReturn(true);
     }
 
     public function it_can_not_add_player_after_game_started()
     {
+    	$this->addPlayer(["Daksh", "Tirth"]);
         $this->start()->shouldReturn(true);
 
         $this->addPlayer("Ila")->shouldReturn(false);
@@ -46,13 +57,21 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_not_be_started_twice()
     {
+    	$this->addPlayer(["Daksh", "Tirth"]);
         $this->start()->shouldReturn(true);
         $this->start()->shouldReturn(false);
     }
 
+    public function it_automatically_start_first_round()
+    {
+    	$this->addPlayer(["Daksh", "Tirth"]);
+        $this->start();
+        $this->getRoundNo()->shouldReturn(1);
+    }
+
     public function it_can_not_record_score_for_player_not_playing()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Hiren"]);
         $this->start();
         $this->askScore("Tirth", 5)->shouldReturn(false);
         $this->askScore("Daksh", 5)->shouldReturn(true);
@@ -75,21 +94,21 @@ class GameSpec extends ObjectBehavior
     {
         $this->askScore("Daksh", 3)->shouldReturn(false);
 
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
         $this->askScore("Daksh", 3)->shouldReturn(true);
     }
 
     public function it_can_ask_score_at_start_of_each_round()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
         $this->askScore("Daksh", 3)->shouldReturn(true);
     }
 
     public function it_can_not_give_score_when_round_not_completed()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
         $this->askScore("Daksh", 3)->shouldReturn(true);
         $this->getScore("Daksh")->shouldReturn(false);
@@ -97,7 +116,7 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_not_give_score_for_player_do_not_exists()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Hiren"]);
         $this->start();
         $this->askScore("Daksh", 3)->shouldReturn(true);
         $this->getScore("Tirth")->shouldReturn(false);
@@ -105,7 +124,7 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_declare_score_positively()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
         $this->askScore("Daksh", 3);
         $this->submitScore("Daksh", true);
@@ -114,7 +133,7 @@ class GameSpec extends ObjectBehavior
 
     public function it_can_declare_score_negetively()
     {
-        $this->addPlayer("Daksh");
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
         $this->askScore("Daksh", 3);
         $this->submitScore("Daksh", false);
@@ -138,6 +157,7 @@ class GameSpec extends ObjectBehavior
 
     public function it_should_follow_KCFL_color()
     {
+    	$this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
 
         $this->getRoundColor()->shouldReturn('K');
@@ -174,6 +194,7 @@ class GameSpec extends ObjectBehavior
 
     public function it_should_return_correct_round_no()
     {
+    	$this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
 
         $this->getRoundNo()->shouldReturn(1);
@@ -188,22 +209,43 @@ class GameSpec extends ObjectBehavior
 
         $this->start();
         $this->getRoundCardsCount()->shouldReturn(7);
-        $this->nextRound();
-        $this->getRoundCardsCount()->shouldReturn(6);
     }
 
-    public function when_round_increases_card_decreases()
+    public function it_will_increases_card_decreases_card()
     {
+        $this->addPlayer(["Daksh", "Tirth"]);
         $this->start();
-        $this->getRoundCardsCount()->shouldReturn(7);
 
+        $this->getRoundCardsCount()->shouldReturn(7);
         $this->nextRound();
         $this->getRoundCardsCount()->shouldReturn(6);
-
         $this->nextRound();
         $this->getRoundCardsCount()->shouldReturn(5);
-
         $this->nextRound();
         $this->getRoundCardsCount()->shouldReturn(4);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(3);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(2);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(1);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(2);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(3);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(4);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(5);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(6);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(7);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(1);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(2);
+        $this->nextRound();
+        $this->getRoundCardsCount()->shouldReturn(3);
     }
 }
